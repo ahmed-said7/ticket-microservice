@@ -1,0 +1,40 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-srv
+#   annotations:
+#     spec.ingressClassName: nginx
+#     nginx.ingress.kubernetes.io/use-regex: "true"
+# spec:
+#   rules:
+#     - host: ticket.dev
+#       http:
+#         paths:
+#           - path: "/user/?(.*)"
+#             pathType: ImplementationSpecific
+#             backend:
+#               service:
+#                 name: auth-srv
+#                 port: 
+#                   number: 3000
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-srv
+#   annotations:
+#     # spec.ingressClassName: nginx
+#     nginx.ingress.kubernetes.io/use-regex: "true"
+# spec:
+#   rules:
+#   - host: ticket.dev
+#     http:
+#       paths:
+#       - pathType: ImplementationSpecific
+#         path: "/user/.*"
+#         backend:
+#           service:
+#             name: auth-srv
+#             port: 
+#               number: 3000
+
+

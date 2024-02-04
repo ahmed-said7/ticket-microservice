@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-depl
+spec:
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - name: payment
+        image: engahmedsaid125/payment
+        env:
+          - name: stripe_secret
+            value: sk_test_51NQWIRJ3lnfQpLb9lung1cbu48nWXDivAR7AC8ufwA0SqCj3zxuTJoSKSVbihcozJGVxetYs6wQhSDXqVRW1esY000WrRxlhhi
+          - name: jwt_secret
+            value: asaeed79
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+spec:
+  selector:
+    app: payment
+  ports:
+  - port: 3004
+    targetPort: 3004
