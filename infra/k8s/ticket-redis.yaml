@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticket-redis-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticket-redis
+  template:
+    metadata:
+      labels:
+        app: ticket-redis
+    spec:
+      containers:
+        - name: ticket-redis
+          image: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticket-redis-srv
+spec:
+  selector:
+    app: ticket-redis
+  ports:
+  - port: 6379
+    targetPort: 6379

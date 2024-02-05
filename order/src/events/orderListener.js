@@ -15,7 +15,7 @@ class ticketCreatedListener extends listener {
         const title=data.title;
         const price=data.price;
         const userId=data.userId;
-        const ticket=await ticketModel.create({_id,title,price,userId});
+        await ticketModel.create({_id,title,price,userId});
         msg.ack();
     };
 };
@@ -36,8 +36,8 @@ class ticketUpdatedListener extends listener {
         const keys=Object.keys(data);
         keys.forEach (  key  => ticket[key] = data[key] );
         await ticket.save();
-        console.log('Begin listen to !!!!!!!!!!!!!');
-        console.log(ticket);
+        // console.log('Begin listen to !!!!!!!!!!!!!');
+        // console.log(ticket);
         msg.ack();
     };
 };
@@ -76,7 +76,7 @@ class orderExpirationCompletedListener extends listener {
         }else {
             order.status='cancelled';
             await order.save();
-            new orderCancelled(wrapperInstance.client).publish(order);
+            await new orderCancelled(wrapperInstance.client).publish(order);
         };
         msg.ack();
     };

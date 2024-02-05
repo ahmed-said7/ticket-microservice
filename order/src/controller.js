@@ -19,8 +19,7 @@ const createOrder = asyncHandler ( async ( req,res,next ) => {
     req.body.status= 'created';
     req.body.userId= req.currentUser._id; 
     order=await orderModel.create(req.body);
-    
-    new orderCreated(wrapperInstance.client).publish(order);
+    await new orderCreated(wrapperInstance.client).publish(order);
     res.status(200).json({order});
 });
 
@@ -34,7 +33,7 @@ const deleteOrder = asyncHandler ( async ( req,res,next ) => {
     };
     order.status = 'cancelled';
     await order.save();
-    new orderCancelled(wrapperInstance.client).publish(order);
+    await new orderCancelled(wrapperInstance.client).publish(order);
     res.status(200).json({status:"success"});
 });
 

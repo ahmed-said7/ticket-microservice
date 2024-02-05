@@ -6,7 +6,7 @@ const mongoose=require('mongoose');
 const router=require('./route');
 const wrapperInstance = require('./events/natsWrapper');
 const { orderCancelledListener, orderCreatedListener } = require('./events/ticketListener');
-
+require('./cache');
 app.use( cookieSession({signed:false}) );
 
 app.use( express.json() );

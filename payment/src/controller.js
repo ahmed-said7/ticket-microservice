@@ -7,7 +7,8 @@ const { chargeCreated } = require('./events/publisher');
 const wrapperInstance = require('./events/nats');
 const createSession=asyncHandler( async ( req,res,next ) => {
     const _id=req.body.orderId;
-    const order=await orderModel.findOne( { _id , status : { $in : ['created','pending'] } });
+    const order=await orderModel.findOne
+    ( { _id , status : { $in : ['created','pending'] } });
     if (!order){
         return next(new apiError('Order not found',400));
     };
@@ -20,7 +21,7 @@ const createSession=asyncHandler( async ( req,res,next ) => {
                 price_data:
                 {
                    currency:"egp" , unit_amount:order.price * 100,
-                    product_data:{name:req.currentUser.email}
+                    product_data: { name : req.currentUser.email }
                 },
                 quantity:1,
             },
@@ -42,8 +43,9 @@ const createCharge= async ()=>{
         return next(new apiError('Invalid order',400));
     };
     order.status='completed';
+    await order.save();
     await chargeModel.create({ orderId:orderId._id , price:order.price });
-    new chargeCreated(wrapperInstance.client).publish({orderId:orderId._id});
+    await new chargeCreated(wrapperInstance.client).publish({orderId:orderId._id});
 };
 const webhookCheckout= asyncHandler ( async ( req,res,next ) => {
     const sig = req.headers['stripe-signature'];
@@ -53,7 +55,6 @@ const webhookCheckout= asyncHandler ( async ( req,res,next ) => {
     } catch (err) {
         console.log(err);
         return res.status(400).send(`Webhook Error: ${err.message}`);
-        
     };
     if(event.type === "checkout.session.completed"){
         createCharge(event);

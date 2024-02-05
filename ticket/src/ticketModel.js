@@ -20,6 +20,6 @@ const ticketSchema=new mongoose.Schema({
 
 ticketSchema.set('versionKey','version');
 // ticketSchema.plugin(updateIfCurrentPlugin);
-
+ticketSchema.index({title:"text"});
 const ticketModel=mongoose.model('Ticket',ticketSchema);
 module.exports=ticketModel;

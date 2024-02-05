@@ -1,5 +1,5 @@
 const ticketModel=require('./ticketModel');
-const {apiError}=require('@func1/common1');
+const {apiError,apiFeatures}=require('@func1/common1');
 const expressAsyncHandler=require('express-async-handler');
 const { ticketCreatedPublisher, ticketUpdatedPublisher } = require('./events/ticketPublisher');
 const wrapperInstance = require('./events/natsWrapper');
@@ -15,7 +15,7 @@ const createTicket = expressAsyncHandler( async (req,res,next) => {
     };
     const data={ userId: ticket.userId,_id:ticket._id,
         price: ticket.price,title:ticket.title,version:ticket.version };
-    new ticketCreatedPublisher(wrapperInstance.client).publish(data);
+    await new ticketCreatedPublisher(wrapperInstance.client).publish(data);
     return res.status(201).json({ ticket });
 } );
 
@@ -50,12 +50,14 @@ const updateTicket = expressAsyncHandler( async (req,res,next) => {
     await ticket.save();
     const data={ userId: ticket.userId,_id:ticket._id,
         price: ticket.price,title:ticket.title,version:ticket.version };
-    new ticketUpdatedPublisher(wrapperInstance.client).publish(data);
+    await new ticketUpdatedPublisher(wrapperInstance.client).publish(data);
     return res.status(201).json({ ticket });
 } );
 
 const getAllTickets= expressAsyncHandler( async (req,res,next) => {
-    const tickets=await ticketModel.find({});
-    res.status(201).json({ tickets });
+    const {query,options}=new apiFeatures(ticketModel.find({}),req.query)
+        .filter().sort().select().search();
+    const data= await query.cache(req.currentUser._id,'ticket');
+    res.status(200).json({data,options});
 } );
 module.exports={getAllTickets,updateTicket,createTicket,getTicket,deleteTicket};
